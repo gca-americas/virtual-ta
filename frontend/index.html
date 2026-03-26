@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop Technical Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+    <div class="nebula-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div class="blob blob-4"></div>
+    </div>
+    <div id="app" class="container">
+        <!-- Login Screen -->
+        <div id="login-screen" class="login-card">
+            <div class="login-header">
+                <h1>Multimodal Frontier TA</h1>
+                <p>Navigating Vision, Audio, and Real-Time Interaction across the stars.</p>
+            </div>
+            <div class="login-tips">
+                <div class="tip-item">📟 <span>"Paste the error message from your terminal"</span></div>
+                <div class="tip-item">🐍 <span>"Paste your Python code to fix indentation"</span></div>
+                <div class="tip-item">📸 <span>"Upload a screenshot to ask what's wrong"</span></div>
+                <div class="tip-item">💡 <span>"Ask any question about the workshop"</span></div>
+            </div>
+            <div id="user-login-form" class="input-group">
+                <input type="text" id="username" placeholder="What's your name?" autocomplete="off">
+                <select id="workshop-select" class="premium-select-login">
+                    <option value="" disabled selected>Select a course...</option>
+                </select>
+                <button id="login-btn" class="glow-btn">Start</button>
+            </div>
+        </div>
+
+        <!-- Chat Screen -->
+        <div id="chat-screen" class="hidden">
+            <header class="chat-header">
+                <div class="codelab-title">
+                    <span class="emoji">🌌</span>
+                    <h2 id="workshop-title">The Multimodal Frontier | Real-Time Interaction & Vision</h2>
+                </div>
+                <div class="header-controls">
+                    <span id="user-display" class="user-badge"></span>
+                    <button id="clear-session-btn" class="text-btn">Clear Session</button>
+                    <button id="logout-btn" class="text-btn">Main Page</button>
+                    <button id="menu-btn" class="icon-btn" title="Menu">⋮</button>
+                </div>
+            </header>
+
+            <div id="chat-messages" class="chat-area">
+                <!-- Messages will be injected by JS with icons -->
+            </div>
+
+            <!-- Quick Suggestions -->
+            <div id="chat-suggestions" class="suggestions-container">
+                <button class="suggestion-chip"
+                    data-suggestion="Tell me more about the key concepts in this workshop.">💡 Knowledge point</button>
+                <button class="suggestion-chip"
+                    data-suggestion="I'm having trouble with Python code indentation, can you help?">🐍 Python
+                    Indentation</button>
+                <button class="suggestion-chip"
+                    data-suggestion="I see an error in my console, can you help me debug it?">📟 Console Error</button>
+            </div>
+
+            <!-- Paste Hint -->
+            <div id="paste-hint" class="paste-hint hidden">
+                <div class="hint-content">
+                    <pre><code id="hint-text">// Paste your code here...</code></pre>
+                </div>
+            </div>
+
+            <footer class="chat-footer">
+                <div class="input-pill">
+                    <label for="file-upload" class="action-btn" title="Add">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                    </label>
+                    <input type="file" id="file-upload" class="hidden" accept="image/*,.txt,.js,.py">
+                    <textarea id="chat-input" placeholder="Ask a question about the codelab..." autocomplete="off"
+                        rows="1"></textarea>
+                    <button id="send-btn" class="send-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="18 15 12 9 6 15" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="preview-area" class="preview-area hidden">
+                    <div class="preview-item">
+                        <span id="file-name">filename.png</span>
+                        <button id="remove-file" class="remove-btn">✕</button>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,7 @@
+google-adk @ git+https://github.com/google/adk-python.git
+certifi
+fastapi
+uvicorn
+python-multipart
+python-dotenv
+google-cloud-firestore

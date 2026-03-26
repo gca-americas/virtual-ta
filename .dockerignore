@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.DS_Store
+.git/
+.gitignore
+.dockerignore
+node_modules/
+backend/temp_uploads/
+backend/logs/
