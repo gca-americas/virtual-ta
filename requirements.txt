@@ -1,4 +1,4 @@
-google-adk @ git+https://github.com/google/adk-python.git
+google-adk==2.0.0a1
 certifi
 fastapi
 uvicorn

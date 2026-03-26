@@ -16,9 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Copy requirements and install
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt \
-    -i https://pypi.org/simple/ \
-    --extra-index-url https://us-python.pkg.dev/artifact-foundry-prod/ah-3p-staging-python/simple/
+RUN pip install --no-cache-dir -r requirements.txt 
 
 # Copy application code
 COPY backend/ ./backend/
