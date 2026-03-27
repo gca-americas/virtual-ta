@@ -5,17 +5,20 @@ import logging
 from google.adk.agents import LlmAgent, Agent
 from google.adk.skills import load_skill_from_dir
 from google.adk.tools import skill_toolset
+from google.adk.models.google_llm import Gemini
 from google.adk.tools import google_search
+from google.genai import types
 
 logger = logging.getLogger(__name__)
 
 # Default skills directory
 _skills_dir = pathlib.Path(__file__).parent / "skills"
 
+
 def get_loaded_skills(skills_dir=None):
     if skills_dir is None:
         skills_dir = _skills_dir
-        
+
     loaded_skills = []
     if skills_dir.exists():
         for skill_folder in os.listdir(skills_dir):
@@ -29,14 +32,20 @@ def get_loaded_skills(skills_dir=None):
                     logger.error(f"Failed to load skill {skill_folder}: {e}")
     return loaded_skills
 
-workshop_skill_toolset = skill_toolset.SkillToolset(
-    skills=get_loaded_skills()
+
+workshop_skill_toolset = skill_toolset.SkillToolset(skills=get_loaded_skills())
+
+model = Gemini(
+    model="gemini-2.5-flash-lite",
+    retry_options=types.HttpRetryOptions(
+        attempts=3, exp_base=5, initial_delay=1, http_status_codes=[429, 500, 503, 504]
+    ),
 )
 
 # Define the Technical Assistant Agent
 course_agent = Agent(
     name="CourseAgent",
-    model="gemini-2.5-flash",
+    model=model,
     instruction="""
     You are a Technical Assistant for different workshop levels. 
     Check the initial message for a [SYSTEM CONTEXT] block which may contain the user's name and selected workshop ID (e.g., 'level-0-skill').
@@ -85,6 +94,7 @@ root_agent = LlmAgent(
     """,
     sub_agents=[course_agent, search_agent],
 )
+
 
 def reload_agent_skills(skills_dir=None):
     """Called after a sync to update the agent's toolset."""

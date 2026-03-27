@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshop Technical Assistant</title>
+    <title>Virtual Technical Assistant</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700&display=swap"
         rel="stylesheet">
@@ -17,13 +17,36 @@
         <div class="blob blob-2"></div>
         <div class="blob blob-3"></div>
         <div class="blob blob-4"></div>
+        <!-- Extra data nodes -->
+        <div class="blob blob-5"></div>
+        <div class="blob blob-6"></div>
+        <div class="blob blob-7"></div>
+        <div class="blob blob-8"></div>
     </div>
     <div id="app" class="container">
+        <!-- Theme Toggle (Floating) -->
+        <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme" onclick="toggleTheme()">
+            <svg class="sun-icon" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+        </button>
+
         <!-- Login Screen -->
         <div id="login-screen" class="login-card">
             <div class="login-header">
-                <h1>Multimodal Frontier TA</h1>
-                <p>Navigating Vision, Audio, and Real-Time Interaction across the stars.</p>
+                <h1>Virtual Technical Assistant</h1>
+                <p>Welcome to your AI-powered companion for Google Cloud technical support.</p>
             </div>
             <div class="login-tips">
                 <div class="tip-item">📟 <span>"Paste the error message from your terminal"</span></div>
@@ -36,6 +59,7 @@
                 <select id="workshop-select" class="premium-select-login">
                     <option value="" disabled selected>Select a course...</option>
                 </select>
+                <p id="workshop-error" class="error-text hidden">Please select a workshop</p>
                 <button id="login-btn" class="glow-btn">Start</button>
             </div>
         </div>
@@ -44,8 +68,8 @@
         <div id="chat-screen" class="hidden">
             <header class="chat-header">
                 <div class="codelab-title">
-                    <span class="emoji">🌌</span>
-                    <h2 id="workshop-title">The Multimodal Frontier | Real-Time Interaction & Vision</h2>
+                    <span class="emoji">🔹</span>
+                    <h2 id="workshop-title">Virtual Technical Assistant</h2>
                 </div>
                 <div class="header-controls">
                     <span id="user-display" class="user-badge"></span>

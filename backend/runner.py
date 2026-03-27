@@ -1,3 +1,4 @@
+import os
 import mimetypes
 import pathlib
 from google.adk.runners import Runner
@@ -5,6 +6,20 @@ from google.adk.sessions import InMemorySessionService
 from google.genai import types
 from google.api_core import exceptions
 from .agent import root_agent
+from dotenv import load_dotenv
+from opentelemetry import trace
+from opentelemetry.exporter.cloud_trace import CloudTraceSpanExporter
+from opentelemetry.sdk.trace import export
+from opentelemetry.sdk.trace import TracerProvider
+
+load_dotenv()
+
+provider = TracerProvider()
+processor = export.BatchSpanProcessor(
+    CloudTraceSpanExporter(project_id=os.environ.get("GOOGLE_CLOUD_PROJECT"))
+)
+provider.add_span_processor(processor)
+trace.set_tracer_provider(provider)
 
 
 class WorkshopRunner:

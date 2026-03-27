@@ -1,28 +1,10 @@
 import os
-import json
-from datetime import datetime
 import uuid
 from google.cloud import firestore
 
-LOG_FILE = "backend/logs/interactions.jsonl"
 
 
 def log_interaction(name, workshop, prompt, response):
-    # Local JSONL Fallback
-    os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
-    log_entry = {
-        "timestamp": datetime.now().isoformat(),
-        "name": name,
-        "workshop": workshop,
-        "prompt": prompt,
-        "response": response,
-    }
-    try:
-        with open(LOG_FILE, "a") as f:
-            f.write(json.dumps(log_entry) + "\n")
-    except Exception as e:
-        print(f"Error writing to local log: {e}")
-
     # Primary: Firestore
     try:
         log_to_firestore(name, workshop, prompt, response)
@@ -39,8 +21,9 @@ def log_to_firestore(user_name, workshop_id, prompt, response):
 
     db = firestore.Client(project=project_id, database=database_id)
 
-    # Store in a collection called 'interactions'
-    doc_ref = db.collection("interactions").document(str(uuid.uuid4()))
+    # Store in a collection dynamically named by the EVENT_ID env var
+    collection_name = os.environ.get("EVENT_ID", "interactions")
+    doc_ref = db.collection(collection_name).document(str(uuid.uuid4()))
     doc_ref.set(
         {
             "userName": user_name,

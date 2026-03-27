@@ -23,6 +23,30 @@ let allAvailableWorkshops = [];
 let currentUser = "";
 let currentWorkshop = "";
 let selectedFile = null;
+const themeToggle = document.getElementById("theme-toggle");
+const workshopError = document.getElementById("workshop-error");
+
+// Theme Handling
+function initTheme() {
+    const savedTheme = localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    setTheme(savedTheme);
+}
+
+function setTheme(theme) {
+    if (theme === "dark") {
+        document.documentElement.classList.add("dark-theme");
+    } else {
+        document.documentElement.classList.remove("dark-theme");
+    }
+    localStorage.setItem("theme", theme);
+}
+
+window.toggleTheme = function(e) {
+    if (e) e.preventDefault();
+    const isDark = document.documentElement.classList.contains("dark-theme");
+    console.log("Theme toggle clicked. Switching from", isDark ? "dark" : "light");
+    setTheme(isDark ? "light" : "dark");
+};
 
 async function loadWorkshops() {
     try {
@@ -43,14 +67,24 @@ async function loadWorkshops() {
 }
 
 // Initial load
+initTheme();
 loadWorkshops();
 
 // Login Handler
 async function login() {
     const name = usernameInput.value.trim();
     const workshop = workshopSelect.value;
+    
+    // Reset error
+    workshopError?.classList.add("hidden");
+
     if (!name) return alert("Please enter your name");
-    if (!workshop) return alert("Please select a workshop");
+    
+    if (!workshop) {
+        workshopError?.classList.remove("hidden");
+        workshopSelect.focus();
+        return;
+    }
 
     // Disable button to prevent double-clicks
     loginBtn.disabled = true;
