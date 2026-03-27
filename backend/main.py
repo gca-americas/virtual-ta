@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 import os
@@ -11,7 +11,9 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from .runner import runner_manager
 from .utils import log_interaction
-
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 # Load environment variables from .env file BEFORE importing agent
 load_dotenv()
@@ -20,7 +22,11 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+limiter = Limiter(key_func=get_remote_address)
+
 app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Enable CORS for frontend interaction
 app.add_middleware(
@@ -113,7 +119,8 @@ async def login(name: str = Form(...), workshop: str = Form(...)):
 
 
 @app.post("/api/greet")
-async def greet_user(name: str = Form(...), workshop: str = Form(...)):
+@limiter.limit("20/minute")
+async def greet_user(request: Request, name: str = Form(...), workshop: str = Form(...)):
     # Trigger an initial greeting from the LLM asynchronously
     try:
         greeting = await runner_manager.run(
@@ -128,7 +135,8 @@ async def greet_user(name: str = Form(...), workshop: str = Form(...)):
 
 
 @app.post("/api/clear-session")
-async def clear_session(name: str = Form(...), workshop: str = Form(...)):
+@limiter.limit("10/minute")
+async def clear_session(request: Request, name: str = Form(...), workshop: str = Form(...)):
     try:
         await runner_manager.clear_session(name, workshop)
         # Also trigger a fresh greeting
@@ -144,7 +152,9 @@ async def clear_session(name: str = Form(...), workshop: str = Form(...)):
 
 
 @app.post("/api/chat")
+@limiter.limit("20/minute")
 async def chat(
+    request: Request,
     name: str = Form(...),
     workshop: str = Form(...),
     message: str = Form(...),
