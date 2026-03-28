@@ -6,7 +6,7 @@ from google.adk.agents import LlmAgent, Agent
 from google.adk.skills import load_skill_from_dir
 from google.adk.tools import skill_toolset
 from google.adk.models.google_llm import Gemini
-from google.adk.tools import google_search
+from google.adk.tools import google_search, AgentTool
 from google.genai import types
 
 logger = logging.getLogger(__name__)
@@ -43,8 +43,24 @@ model = Gemini(
 )
 
 # Define the Technical Assistant Agent
-course_agent = Agent(
-    name="CourseAgent",
+
+
+search_agent = Agent(
+    name="SearchAgent",
+    model=model,
+    description="A specialist tool that searches the internet for technical information not found in the local workshop files.",
+    instruction="""
+    You are a Search Specialist. Your task is to use the `google_search` tool to find answers to technical questions.
+    
+    1. If you receive a "SEARCH_QUERY" from the manager, use it word-for-word in the tool.
+    2. Ensure the results you provide are technical and relevant to the workshop's technologies (Python, FastAPI, Google Cloud, AI).
+    3. If the query is out-of-scope, politely inform the user that you can only help with workshop-related technical questions.
+    """,
+    tools=[google_search],
+)
+
+root_agent = Agent(
+    name="TechnicalAssistant",
     model=model,
     instruction="""
     You are a Technical Assistant for different workshop levels. 
@@ -56,50 +72,24 @@ course_agent = Agent(
     1. If a matching error is found in the skill's FAQ, you MUST provide the EXACT solution documented there. 
     2. Project-specific solutions in the skill MUST override your general technical knowledge.
     3. If the skill mandates a specific tool call (like reading lab instructions) for certain queries, you MUST perform it.
+    4. If the skill mandates SearchAgent, you MUST perform it.
     
     CRITICAL: Keep your initial greeting extremely concise. Just confirm the workshop is loaded and ask how you can help. 
     Avoid long summaries unless explicitly asked. Example: "Hi [Name]! How can I help you today?"
     
     You can ask users for screenshots or to paste files if they are stuck.
     Always be professional, encouraging, and helpful.
-    """,
-    tools=[workshop_skill_toolset],
-)
+    And ask verify the user's question to provide more information if you are not sure.
 
-search_agent = Agent(
-    name="SearchAgent",
-    model="gemini-2.5-flash",
-    instruction="""
-    You are a Search Specialist. Your task is to use the `google_search` tool to find answers to technical questions.
+    CRITICAL: If the user's question is not related to the workshop, politely inform them that you can only help with workshop-related technical questions. 
     
-    1. If you receive a "SEARCH_QUERY" from the manager, use it word-for-word in the tool.
-    2. Ensure the results you provide are technical and relevant to the workshop's technologies (Python, FastAPI, Google Cloud, AI).
-    3. If the query is out-of-scope, politely inform the user that you can only help with workshop-related technical questions.
+
+    **FALLBACK SEARCH PREPARATION:**
+    If you cannot find an answer within the provided skill materials:
+        1. Determine if the question is within the technical scope of the workshop
+        2. If it is in-scope, instead of answering "I don't know", you MUST call SearchAgent.
+        3. Use the avalible google search tool to search for the answer and provide it to the user.
+
     """,
-    tools=[google_search],
+    tools=[workshop_skill_toolset, AgentTool(search_agent)],
 )
-
-root_agent = LlmAgent(
-    name="TechnicalAssistant",
-    model="gemini-2.5-flash",
-    instruction="""
-    You are the manager for the Technical Assistant system. Your goal is to provide accurate help for workshop participants.
-    
-    ORCHESTRATION RULES:
-    1. For ALL user questions or issues, you MUST first consult the `course_agent`.
-    2. DETECT SEARCH REQUESTS: If the `course_agent` response contains the string "SEARCH_QUERY:", you MUST NOT show this partial response to the user. Instead, you MUST immediately delegate the request to the `search_agent` using the provided query string.
-    3. If `course_agent` provides a complete answer WITHOUT a "SEARCH_QUERY" tag, relay it to the user.
-    4. Only use the `search_agent` as a fallback when `course_agent` suggests it.
-    5. Always combine the context from both agents into a final, helpful response before replying to the user.
-    """,
-    sub_agents=[course_agent, search_agent],
-)
-
-
-def reload_agent_skills(skills_dir=None):
-    """Called after a sync to update the agent's toolset."""
-    global workshop_skill_toolset, course_agent
-    new_skills = get_loaded_skills(skills_dir)
-    workshop_skill_toolset = skill_toolset.SkillToolset(skills=new_skills)
-    course_agent.tools = [workshop_skill_toolset]
-    logger.info("Agent toolset reloaded with new skills.")
