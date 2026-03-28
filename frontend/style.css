@@ -589,7 +589,7 @@ input[type="text"]:focus {
 .msg-bubble pre code {
     background: none;
     padding: 0;
-    color: #202124;
+    color: var(--text-primary);
 }
 
 .suggestions-container {

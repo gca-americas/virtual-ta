@@ -80,15 +80,26 @@ class WorkshopRunner:
             )
 
             full_text = ""
+            last_text = ""
+            
             if hasattr(response, "__aiter__"):
                 async for event in response:
-                    full_text += self._extract_text(event)
-            # Check for regular generator
-            elif hasattr(response, "__iter__") and not isinstance(
-                response, (str, list, dict)
-            ):
+                    text = self._extract_text(event)
+                    if text and text != last_text:
+                        if text.startswith(last_text):
+                            full_text += text[len(last_text):]
+                        else:
+                            full_text += text
+                        last_text = text
+            elif hasattr(response, "__iter__") and not isinstance(response, (str, list, dict)):
                 for event in response:
-                    full_text += self._extract_text(event)
+                    text = self._extract_text(event)
+                    if text and text != last_text:
+                        if text.startswith(last_text):
+                            full_text += text[len(last_text):]
+                        else:
+                            full_text += text
+                        last_text = text
             else:
                 full_text = self._extract_text(response)
 
