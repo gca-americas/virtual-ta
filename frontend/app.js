@@ -201,16 +201,42 @@ async function clearSession() {
 
 // Send Message Handler
 async function sendMessage() {
-    const message = chatInput.value.trim();
-    if (!message && !selectedFile) return;
+    let baseMessage = chatInput.value.trim();
+    
+    // Extract Context Tools natively
+    const codeFileName = document.getElementById('code-filename-input').value.trim();
+    const codeContent = document.getElementById('code-content-input').value.trim();
+    const terminalError = document.getElementById('terminal-error-input').value.trim();
 
-    appendMessage("user", message);
+    // Aggregating logical fail-state
+    if (!baseMessage && !selectedFile && !codeContent && !terminalError) return;
+
+    // Construct the explicit Payload String organically
+    let aggregatedMessage = baseMessage;
+    
+    if (codeContent) {
+        aggregatedMessage += `\n\n[Active Code Context: ${codeFileName || 'Unknown File'}]\nPlease verify this code and also check indentation:\n\`\`\`\n${codeContent}\n\`\`\``;
+    }
+    
+    if (terminalError) {
+        aggregatedMessage += `\n\n[Terminal Error]\n\`\`\`\n${terminalError}\n\`\`\``;
+    }
+    
+    // Visual trace proxy mirroring what we physically send
+    const displayMessage = aggregatedMessage.trim();
+    appendMessage("user", displayMessage);
+    
+    // Clear out GUI states organically
     chatInput.value = "";
+    document.getElementById('code-filename-input').value = "";
+    document.getElementById('code-content-input').value = "";
+    document.getElementById('terminal-error-input').value = "";
 
     const formData = new FormData();
     formData.append("name", currentUser);
     formData.append("workshop", currentWorkshop);
-    formData.append("message", message);
+    formData.append("message", displayMessage);
+    
     if (selectedFile) {
         formData.append("file", selectedFile);
     }

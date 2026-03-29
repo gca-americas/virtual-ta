@@ -4,15 +4,15 @@ from google.cloud import firestore
 
 
 
-def log_interaction(name, workshop, prompt, response):
+def log_interaction(name, workshop, prompt, response, interface="web"):
     # Primary: Firestore
     try:
-        log_to_firestore(name, workshop, prompt, response)
+        log_to_firestore(name, workshop, prompt, response, interface)
     except Exception as e:
         print(f"Error logging to Firestore: {e}")
 
 
-def log_to_firestore(user_name, workshop_id, prompt, response):
+def log_to_firestore(user_name, workshop_id, prompt, response, interface):
     project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
     database_id = os.environ.get("FIRESTORE_DATABASE_ID", "(default)")
 
@@ -31,6 +31,7 @@ def log_to_firestore(user_name, workshop_id, prompt, response):
             "timestamp": firestore.SERVER_TIMESTAMP,
             "prompt": prompt,
             "response": response,
+            "interface": interface,
         }
     )
 

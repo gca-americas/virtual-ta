@@ -189,7 +189,7 @@ body {
 
 .container {
     width: 100%;
-    max-width: 1000px;
+    max-width: 1400px;
     height: 95vh;
     display: flex;
     justify-content: center;
@@ -206,9 +206,84 @@ body {
     border-radius: var(--border-radius-lg);
     border: 1px solid var(--glass-border);
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     overflow: hidden;
     box-shadow: var(--shadow-deep);
+}
+
+.chat-left-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    min-width: 0;
+    position: relative;
+    height: 100%;
+}
+
+.context-tools-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 24px;
+    overflow-y: auto;
+}
+
+.context-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-teal);
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+}
+
+.context-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.context-section h4 {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.context-input {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1.15rem;
+}
+
+.context-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 1.1rem;
+    resize: vertical;
+}
+
+.context-textarea.large {
+    min-height: 250px;
+}
+
+.context-hint {
+    font-size: 1.0rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-top: 10px;
 }
 
 .chat-header {

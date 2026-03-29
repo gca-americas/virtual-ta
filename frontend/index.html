@@ -75,7 +75,7 @@
                 <div style="font-size: 0.85rem; color: var(--text-secondary); padding: 12px; background: var(--bg-cream); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 15px;">
                     <strong style="color: var(--text-primary);">Option 1: Google Cloud Shell Editor</strong><br>
                     Because the Cloud Shell terminal lacks the `code` CLI, you must download it into your VM first. Paste this into your Cloud Shell Terminal:<br>
-                    <code id="curl-cmd" style="display: block; background: var(--code-bg); color: var(--text-primary); border: 1px solid var(--border); padding: 8px; margin-top: 8px; margin-bottom: 8px; user-select: all; border-radius: 4px; font-family: monospace; white-space: pre-wrap; word-break: break-all;">curl -sL https://vta-1234.gca-americas.dev/ext.vsix -o vta.vsix</code>
+                    <code id="curl-cmd" style="display: block; background: var(--code-bg); color: var(--text-primary); border: 1px solid var(--border); padding: 8px; margin-top: 8px; margin-bottom: 8px; user-select: all; border-radius: 4px; font-family: monospace; white-space: pre-wrap; word-break: break-all;">curl -sL http://127.0.0.1:8080/virtual-ta-ide.vsix -o virtual-ta.vsix</code>
                     Finally, click the <strong>Extensions</strong> icon on the left -> click the <strong>... Menu</strong> at the top -> select <em>"Install from VSIX..."</em> and target the file.
                 </div>
 
@@ -119,67 +119,83 @@
 
         <!-- Chat Screen -->
         <div id="chat-screen" class="hidden">
-            <header class="chat-header">
-                <div class="codelab-title">
-                    <span class="emoji">🔹</span>
-                    <h2 id="workshop-title">Virtual Technical Assistant</h2>
-                </div>
-                <div class="header-controls">
-                    <span id="user-display" class="user-badge"></span>
-                    <button id="clear-session-btn" class="text-btn">Clear Session</button>
-                    <button id="logout-btn" class="text-btn">Main Page</button>
-                    <button id="menu-btn" class="icon-btn" title="Menu">⋮</button>
-                </div>
-            </header>
+            <!-- Left Column: Chat -->
+            <div class="chat-left-col">
+                <header class="chat-header">
+                    <div class="codelab-title">
+                        <span class="emoji">🔹</span>
+                        <h2 id="workshop-title">Virtual Technical Assistant</h2>
+                    </div>
+                    <div class="header-controls">
+                        <span id="user-display" class="user-badge"></span>
+                        <button id="clear-session-btn" class="text-btn">Clear Session</button>
+                        <button id="logout-btn" class="text-btn">Main Page</button>
+                        <button id="menu-btn" class="icon-btn" title="Menu">⋮</button>
+                    </div>
+                </header>
 
-            <div id="chat-messages" class="chat-area">
-                <!-- Messages will be injected by JS with icons -->
-            </div>
-
-            <!-- Quick Suggestions -->
-            <div id="chat-suggestions" class="suggestions-container">
-                <button class="suggestion-chip"
-                    data-suggestion="Tell me more about the key concepts in this workshop.">💡 Knowledge point</button>
-                <button class="suggestion-chip"
-                    data-suggestion="I'm having trouble with Python code indentation, can you help?">🐍 Python
-                    Indentation</button>
-                <button class="suggestion-chip"
-                    data-suggestion="I see an error in my console, can you help me debug it?">📟 Console Error</button>
-            </div>
-
-            <!-- Paste Hint -->
-            <div id="paste-hint" class="paste-hint hidden">
-                <div class="hint-content">
-                    <pre><code id="hint-text">// Paste your code here...</code></pre>
+                <div id="chat-messages" class="chat-area">
+                    <!-- Messages will be injected by JS with icons -->
                 </div>
-            </div>
 
-            <footer class="chat-footer">
-                <div class="input-pill">
-                    <label for="file-upload" class="action-btn" title="Add">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <line x1="12" y1="5" x2="12" y2="19" />
-                            <line x1="5" y1="12" x2="19" y2="12" />
-                        </svg>
-                    </label>
-                    <input type="file" id="file-upload" class="hidden" accept="image/*,.txt,.js,.py">
-                    <textarea id="chat-input" placeholder="Ask a question about the codelab..." autocomplete="off"
-                        rows="1"></textarea>
-                    <button id="send-btn" class="send-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <polyline points="18 15 12 9 6 15" />
-                        </svg>
-                    </button>
+                <!-- Quick Suggestions -->
+                <div id="chat-suggestions" class="suggestions-container">
+                    <button class="suggestion-chip"
+                        data-suggestion="Tell me more about the key concepts in this workshop.">💡 Knowledge point</button>
                 </div>
-                <div id="preview-area" class="preview-area hidden">
-                    <div class="preview-item">
-                        <span id="file-name">filename.png</span>
-                        <button id="remove-file" class="remove-btn">✕</button>
+
+                <!-- Paste Hint -->
+                <div id="paste-hint" class="paste-hint hidden">
+                    <div class="hint-content">
+                        <pre><code id="hint-text">// Paste your code here...</code></pre>
                     </div>
                 </div>
-            </footer>
+
+                <footer class="chat-footer">
+                    <div class="input-pill">
+                        <label for="file-upload" class="action-btn" title="Add">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                        </label>
+                        <input type="file" id="file-upload" class="hidden" accept="image/*,.txt,.js,.py">
+                        <textarea id="chat-input" placeholder="Ask a question about the codelab..." autocomplete="off" rows="1"></textarea>
+                        <button id="send-btn" class="send-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="18 15 12 9 6 15" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="preview-area" class="preview-area hidden">
+                        <div class="preview-item">
+                            <span id="file-name">filename.png</span>
+                            <button id="remove-file" class="remove-btn">✕</button>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+
+            <!-- Right Column: IDE Context Tools -->
+            <div class="context-tools-col">
+                <h3 class="context-title">IDE Context Tooling</h3>
+                
+                <div class="context-section">
+                    <h4>Paste Code Context</h4>
+                    <input type="text" id="code-filename-input" class="context-input" placeholder="Code Filename (e.g., app.py)">
+                    <textarea id="code-content-input" class="context-textarea large" placeholder="Paste your raw code buffer here..."></textarea>
+                </div>
+
+                <div class="context-section">
+                    <h4>Terminal Errors</h4>
+                    <textarea id="terminal-error-input" class="context-textarea" placeholder="Paste command line tracebacks or errors here..."></textarea>
+                </div>
+
+                <div class="context-hint">
+                    <p>💡 <i>Any active Code or Terminal text entered here will be automatically extracted and bundled securely into your message when you hit the primary SEND button on the left!</i></p>
+                    <p style="margin-top: 10px;">💡 <i>Standard conversational questions, or errors from other places, should just be described and copy/pasted directly into the chat box!</i></p>
+                </div>
+            </div>
         </div>
     </div>
     <script src="app.js"></script>

@@ -38,7 +38,8 @@ app.add_middleware(
 
 
 @app.get("/api/workshops")
-async def get_workshops():
+@limiter.limit("20/minute")
+async def get_workshops(request: Request):
     workshops = []
     skills_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "skills"))
     if not os.path.isdir(skills_dir):
@@ -78,22 +79,30 @@ async def get_workshops():
     workshops.sort(key=lambda x: x["name"])
     return workshops
 
+
 class SyncRequest(BaseModel):
     repo_url: str
     courses: list[str]
+
 
 @app.post("/api/admin/sync")
 async def sync_skills(request: SyncRequest):
     from .skills_manager import download_skills
     from .agent import reload_agent_skills, _skills_dir
-    
+
     # We download to the default skills dir
     success = download_skills(request.repo_url, request.courses, str(_skills_dir))
     if success:
         reload_agent_skills(_skills_dir)
-        return {"status": "success", "message": f"Synced {len(request.courses)} courses"}
+        return {
+            "status": "success",
+            "message": f"Synced {len(request.courses)} courses",
+        }
     else:
-        raise HTTPException(status_code=500, detail="Failed to sync skills from repository")
+        raise HTTPException(
+            status_code=500, detail="Failed to sync skills from repository"
+        )
+
 
 class EventRequest(BaseModel):
     event_name: str
@@ -102,13 +111,6 @@ class EventRequest(BaseModel):
     language: str
     country: str
     courses: list[str]
-
-
-
-
-
-
-
 
 
 @app.post("/api/login")
@@ -120,7 +122,9 @@ async def login(name: str = Form(...), workshop: str = Form(...)):
 
 @app.post("/api/greet")
 @limiter.limit("20/minute")
-async def greet_user(request: Request, name: str = Form(...), workshop: str = Form(...)):
+async def greet_user(
+    request: Request, name: str = Form(...), workshop: str = Form(...)
+):
     # Trigger an initial greeting from the LLM asynchronously
     try:
         greeting = await runner_manager.run(
@@ -136,7 +140,9 @@ async def greet_user(request: Request, name: str = Form(...), workshop: str = Fo
 
 @app.post("/api/clear-session")
 @limiter.limit("10/minute")
-async def clear_session(request: Request, name: str = Form(...), workshop: str = Form(...)):
+async def clear_session(
+    request: Request, name: str = Form(...), workshop: str = Form(...)
+):
     try:
         await runner_manager.clear_session(name, workshop)
         # Also trigger a fresh greeting
@@ -158,6 +164,7 @@ async def chat(
     name: str = Form(...),
     workshop: str = Form(...),
     message: str = Form(...),
+    interface: str = Form("web"),
     file: Optional[UploadFile] = File(None),
 ):
     file_path = None
@@ -173,7 +180,7 @@ async def chat(
         response_text = await runner_manager.run(
             name, workshop, message, attachment=abs_file_path
         )
-        log_interaction(name, workshop, message, response_text)
+        log_interaction(name, workshop, message, response_text, interface)
         return {"response": response_text}
     except Exception as e:
         # Print full traceback to terminal for debugging
