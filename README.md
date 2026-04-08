@@ -15,17 +15,20 @@ When providing a skill, ensure you include:
 2. **Solution Files / References**: Provide the solution files (e.g., `instructions.lab.md`) and any scripts under the `references/` directory.
 3. **Other Materials**: Any additional data, materials, or context needed for the skill to operate.
 
+See https://github.com/gca-americas/virtual-ta-skills for reference 
+
 ### How to test it locally
 
 1. Pull the `virtual-ta` repository.
 2. Create a folder named `skills` under `virtual-ta/backend`.
-3. Add a `.env` file under `backend/` with the following configuration:
+3. Create a folder and add the course materials under `skills/<course-name>`.
+4. Add a `.env` file under `backend/` with the following configuration:
    ```env
    GOOGLE_CLOUD_PROJECT=YOUR PROJECT
    GOOGLE_CLOUD_LOCATION=global
    GOOGLE_GENAI_USE_VERTEXAI=True
    ```
-4. Run the application:
+5. Run the application:
    ```bash
    # This requires the specific artifact registry in workshop-ta requirements
    pip install -r requirements.txt 
