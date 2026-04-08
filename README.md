@@ -27,6 +27,7 @@ See https://github.com/gca-americas/virtual-ta-skills for reference
    GOOGLE_CLOUD_PROJECT=YOUR PROJECT
    GOOGLE_CLOUD_LOCATION=global
    GOOGLE_GENAI_USE_VERTEXAI=True
+   TEST_LOCAL=True
    ```
 5. Run the application:
    ```bash
