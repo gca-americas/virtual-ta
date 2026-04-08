@@ -80,30 +80,6 @@ async def get_workshops(request: Request):
     return workshops
 
 
-class SyncRequest(BaseModel):
-    repo_url: str
-    courses: list[str]
-
-
-@app.post("/api/admin/sync")
-async def sync_skills(request: SyncRequest):
-    from .skills_manager import download_skills
-    from .agent import reload_agent_skills, _skills_dir
-
-    # We download to the default skills dir
-    success = download_skills(request.repo_url, request.courses, str(_skills_dir))
-    if success:
-        reload_agent_skills(_skills_dir)
-        return {
-            "status": "success",
-            "message": f"Synced {len(request.courses)} courses",
-        }
-    else:
-        raise HTTPException(
-            status_code=500, detail="Failed to sync skills from repository"
-        )
-
-
 class EventRequest(BaseModel):
     event_name: str
     start_date: str
@@ -180,7 +156,12 @@ async def chat(
         response_text = await runner_manager.run(
             name, workshop, message, attachment=abs_file_path
         )
-        log_interaction(name, workshop, message, response_text, interface)
+        if os.environ.get("TEST_LOCAL") == "True":
+            print(
+                f"TEST_LOCAL is True. Skipping Firestore. Interaction logged locally - User: {name}, Workshop: {workshop}"
+            )
+        else:
+            log_interaction(name, workshop, message, response_text, interface)
         return {"response": response_text}
     except Exception as e:
         # Print full traceback to terminal for debugging
