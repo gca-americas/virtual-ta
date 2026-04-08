@@ -99,7 +99,10 @@ async def login(name: str = Form(...), workshop: str = Form(...)):
 @app.post("/api/greet")
 @limiter.limit("20/minute")
 async def greet_user(
-    request: Request, name: str = Form(...), workshop: str = Form(...)
+    request: Request,
+    name: str = Form(...),
+    workshop: str = Form(...),
+    language: str = Form("English"),
 ):
     # Trigger an initial greeting from the LLM asynchronously
     try:
@@ -107,6 +110,7 @@ async def greet_user(
             name,
             workshop,
             f"I am {name}. I have just joined the {workshop} workshop. Briefly greet me, confirm you have the instructions, and ask for my first question. Keep it under 2 sentences.",
+            language=language,
         )
         return {"greeting": greeting}
     except Exception as e:
@@ -117,7 +121,10 @@ async def greet_user(
 @app.post("/api/clear-session")
 @limiter.limit("10/minute")
 async def clear_session(
-    request: Request, name: str = Form(...), workshop: str = Form(...)
+    request: Request,
+    name: str = Form(...),
+    workshop: str = Form(...),
+    language: str = Form("English"),
 ):
     try:
         await runner_manager.clear_session(name, workshop)
@@ -126,6 +133,7 @@ async def clear_session(
             name,
             workshop,
             f"I am {name}. I have just cleared my session for the {workshop} workshop. Please greet me again as if it's a fresh start.",
+            language=language,
         )
         return {"status": "success", "greeting": greeting}
     except Exception as e:
@@ -141,6 +149,7 @@ async def chat(
     workshop: str = Form(...),
     message: str = Form(...),
     interface: str = Form("web"),
+    language: str = Form("English"),
     file: Optional[UploadFile] = File(None),
 ):
     file_path = None
@@ -154,7 +163,7 @@ async def chat(
     try:
         abs_file_path = os.path.abspath(file_path) if file_path else None
         response_text = await runner_manager.run(
-            name, workshop, message, attachment=abs_file_path
+            name, workshop, message, attachment=abs_file_path, language=language
         )
         if os.environ.get("TEST_LOCAL") == "True":
             print(

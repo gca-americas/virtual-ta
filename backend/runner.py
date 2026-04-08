@@ -32,8 +32,19 @@ class WorkshopRunner:
             session_service=self.session_service,
         )
 
-    async def run(self, name: str, workshop_id: str, message: str, attachment=None):
-        parts = [types.Part.from_text(text=message)]
+    async def run(
+        self,
+        name: str,
+        workshop_id: str,
+        message: str,
+        attachment=None,
+        language: str = "English",
+    ):
+        # Force a deterministic language output using a System Override wrapper around the active message boundary
+        lang_override = f"[SYSTEM OVERRIDE: The user selected interface language is '{language}'. You MUST write your entire response exclusively in {language}, regardless of previous conversations or standard instructions.]\n\n"
+        enhanced_message = lang_override + message
+
+        parts = [types.Part.from_text(text=enhanced_message)]
 
         # Add attachment if present
         if attachment:

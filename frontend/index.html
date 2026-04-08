@@ -44,25 +44,35 @@
             </svg>
         </button>
 
+        <!-- Language Selector -->
+        <select id="language-select" class="lang-toggle-btn" style="position: absolute; top: 1rem; right: 4.5rem; padding: 8px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-cream); color: var(--text-primary); font-family: inherit; font-size: 0.9rem; cursor: pointer; z-index: 100; box-shadow: var(--shadow);">
+            <option value="English">English</option>
+            <option value="Spanish">Español</option>
+            <option value="Portuguese">Português</option>
+            <option value="Chinese (Simplified)">简体中文</option>
+            <option value="Chinese (Traditional)">繁體中文</option>
+            <option value="Japanese">日本語</option>
+        </select>
+
         <!-- Login Screen -->
         <div id="login-screen" class="login-card">
             <div class="login-header">
-                <h1>Virtual Technical Assistant</h1>
-                <p>Welcome to your AI-powered companion for Google Cloud technical support.</p>
+                <h1 data-i18n="title">Virtual Technical Assistant</h1>
+                <p data-i18n="subtitle">Welcome to your AI-powered companion for Google Cloud technical support.</p>
             </div>
             <div class="login-tips">
-                <div class="tip-item">📟 <span>"Paste the error message from your terminal"</span></div>
-                <div class="tip-item">🐍 <span>"Paste your Python code to fix indentation"</span></div>
-                <div class="tip-item">📸 <span>"Upload a screenshot to ask what's wrong"</span></div>
-                <div class="tip-item">💡 <span>"Ask any question about the workshop"</span></div>
+                <div class="tip-item">📟 <span data-i18n="tip_1">"Paste the error message from your terminal"</span></div>
+                <div class="tip-item">🐍 <span data-i18n="tip_2">"Paste your Python code to fix indentation"</span></div>
+                <div class="tip-item">📸 <span data-i18n="tip_3">"Upload a screenshot to ask what's wrong"</span></div>
+                <div class="tip-item">💡 <span data-i18n="tip_4">"Ask any question about the workshop"</span></div>
             </div>
             <div id="user-login-form" class="input-group">
-                <input type="text" id="username" placeholder="What's your name?" autocomplete="off">
+                <input type="text" id="username" placeholder="What's your name?" data-i18n-placeholder="name_placeholder" autocomplete="off">
                 <select id="workshop-select" class="premium-select-login">
-                    <option value="" disabled selected>Select a course...</option>
+                    <option value="" disabled selected data-i18n="select_course">Select a course...</option>
                 </select>
-                <p id="workshop-error" class="error-text hidden">Please select a workshop</p>
-                <button id="login-btn" class="glow-btn">Start</button>
+                <p id="workshop-error" class="error-text hidden" data-i18n="workshop_error">Please select a workshop</p>
+                <button id="login-btn" class="glow-btn" data-i18n="start_btn">Start</button>
             </div>
 
             <div class="extension-download"
@@ -128,8 +138,8 @@
                     </div>
                     <div class="header-controls">
                         <span id="user-display" class="user-badge"></span>
-                        <button id="clear-session-btn" class="text-btn">Clear Session</button>
-                        <button id="logout-btn" class="text-btn">Main Page</button>
+                        <button id="clear-session-btn" class="text-btn" data-i18n="clear_session">Clear Session</button>
+                        <button id="logout-btn" class="text-btn" data-i18n="main_page">Main Page</button>
                         <button id="menu-btn" class="icon-btn" title="Menu">⋮</button>
                     </div>
                 </header>
@@ -141,7 +151,7 @@
                 <!-- Quick Suggestions -->
                 <div id="chat-suggestions" class="suggestions-container">
                     <button class="suggestion-chip"
-                        data-suggestion="Tell me more about the key concepts in this workshop.">💡 Knowledge point</button>
+                        data-suggestion="Tell me more about the key concepts in this workshop." data-i18n="knowledge_point">💡 Knowledge point</button>
                 </div>
 
                 <!-- Paste Hint -->
@@ -160,7 +170,7 @@
                             </svg>
                         </label>
                         <input type="file" id="file-upload" class="hidden" accept="image/*,.txt,.js,.py">
-                        <textarea id="chat-input" placeholder="Ask a question about the codelab..." autocomplete="off" rows="1"></textarea>
+                        <textarea id="chat-input" placeholder="Ask a question about the codelab..." data-i18n-placeholder="chat_placeholder" autocomplete="off" rows="1"></textarea>
                         <button id="send-btn" class="send-btn">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="18 15 12 9 6 15" />
@@ -178,22 +188,22 @@
 
             <!-- Right Column: IDE Context Tools -->
             <div class="context-tools-col">
-                <h3 class="context-title">IDE Context Tooling</h3>
+                <h3 class="context-title" data-i18n="ide_tooling">IDE Context Tooling</h3>
                 
                 <div class="context-section">
-                    <h4>Paste Code Context</h4>
-                    <input type="text" id="code-filename-input" class="context-input" placeholder="Code Filename (e.g., app.py)">
-                    <textarea id="code-content-input" class="context-textarea large" placeholder="Paste your raw code buffer here..."></textarea>
+                    <h4 data-i18n="paste_code_context">Paste Code Context</h4>
+                    <input type="text" id="code-filename-input" class="context-input" placeholder="Code Filename (e.g., app.py)" data-i18n-placeholder="code_placeholder">
+                    <textarea id="code-content-input" class="context-textarea large" placeholder="Paste your raw code buffer here..." data-i18n-placeholder="buffer_placeholder"></textarea>
                 </div>
 
                 <div class="context-section">
-                    <h4>Terminal Errors</h4>
-                    <textarea id="terminal-error-input" class="context-textarea" placeholder="Paste command line tracebacks or errors here..."></textarea>
+                    <h4 data-i18n="terminal_errors">Terminal Errors</h4>
+                    <textarea id="terminal-error-input" class="context-textarea" placeholder="Paste command line tracebacks or errors here..." data-i18n-placeholder="error_placeholder"></textarea>
                 </div>
 
                 <div class="context-hint">
-                    <p>💡 <i>Any active Code or Terminal text entered here will be automatically extracted and bundled securely into your message when you hit the primary SEND button on the left!</i></p>
-                    <p style="margin-top: 10px;">💡 <i>Standard conversational questions, or errors from other places, should just be described and copy/pasted directly into the chat box!</i></p>
+                    <p>💡 <i data-i18n="hint_1">Any active Code or Terminal text entered here will be automatically extracted and bundled securely into your message when you hit the primary SEND button on the left!</i></p>
+                    <p style="margin-top: 10px;">💡 <i data-i18n="hint_2">Standard conversational questions, or errors from other places, should just be described and copy/pasted directly into the chat box!</i></p>
                 </div>
             </div>
         </div>
